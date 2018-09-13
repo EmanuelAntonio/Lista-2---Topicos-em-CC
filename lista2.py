@@ -10,6 +10,12 @@ def exata(x):
             y[i] = 1.0
     return y
 
+
+"""
+/*
+    Método Lax–Friedrichs - LxF
+*/
+"""
 def laxFriedrichs(uu,Nx,Nt,h,dt):
     global K
     u = np.zeros([Nx+1,Nt+1])
@@ -18,6 +24,14 @@ def laxFriedrichs(uu,Nx,Nt,h,dt):
         for i in range(1,Nx):
             u[i,t+1] = 0.5*(u[i+1,t]+u[i-1,t]) - (K*dt/(2*h))*(u[i+1,t]-u[i-1,t])
     return u
+
+"""
+/*
+    Método Kurganov-Tadmor - KT
+*/
+"""
+def kurganovTadmor():
+    return
 
 def condicaoInicial(Nx,Nt,h):
     u = np.zeros([Nx+1,Nt+1])
