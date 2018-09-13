@@ -51,7 +51,7 @@ A = 0 #Limite inferior para x
 B = m.pi #Limite superior para x
 Nx = 100 #Quantidade de elementos
 h = (B - A)/np.float(Nx) #Discretização no espaço
-T = 4 #Tempo final
+T = 1 #Tempo final
 dt = 0.5*h #Discretização no tempo
 Nt = np.int(T/dt) #Quantidade de iterações no tempo
 x = np.linspace(A,B,Nx+1) #Para plot das aproximações
@@ -65,9 +65,9 @@ u = condicoesContorno(u,Nx,Nt)
 
 u_laxFri = laxFriedrichs(u,Nx,Nt,h,dt)
 
-tj = 1 #Instante de tempo desejado
-#t = int(tj/dt) #Índice correspondente
-t = 0
+tj = 0 #Instante de tempo desejado
+t = int(tj/dt) #Índice correspondente
+
 #Plota o grafico
 #plt.title('Exata x Aproximada (400 elementos, dt = 1.5h)')
 plt.title('Exata x Aproximada ('+ str(Nx) +  ' elementos , dt = ' + str(dt/h) + 'h)')
