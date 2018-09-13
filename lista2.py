@@ -19,14 +19,6 @@ def laxFriedrichs(uu,Nx,Nt,h,dt):
             u[i,t+1] = 0.5*(u[i+1,t]+u[i-1,t]) - (K*dt/(2*h))*(u[i+1,t]-u[i-1,t])
     return u
 
-def NessyahuTadmor(uu,Nx,Nt,h,dt):
-    global K
-    u = np.zeros([Nx+1,Nt+1])
-    u[:,:] = uu[:,:]
-    for t in range(0,Nt):
-        for i in range(1,Nx):
-            u[(i+1)/2,t+1] = 0.5*(u[i,t]+u[i+1,t]) - (K*dt/h)*(u[i+1,(t+1)/2]-u[i-1,(t+1)/2])
-
 def condicaoInicial(Nx,Nt,h):
     u = np.zeros([Nx+1,Nt+1])
     for i in range(0,Nx+1):
