@@ -22,6 +22,8 @@ def laxFriedrichs(uu,Nx,Nt,h,dt):
     for t in range(0,Nt):
         for i in range(1,Nx-1):
             u[i,t+1] = 0.5*(u[i+1,t]+u[i-1,t]) - (K*dt/(2*h))*(u[i+1,t]-u[i-1,t])
+        u[0,t+1] = u[1,t+1]
+        u[Nx-1,t+1] = u[Nx-2,t+1]
     return u
 
 """
@@ -79,11 +81,9 @@ def condicaoInicial(Nx,Nt,h):
 
 
 def condicoesContorno(u,Nx,Nt):
-    for t in range(0, Nt+1):
-        u[0,t] = m.sin(0*h)
-        u[1,t] = m.sin(1*h)
-        u[Nx-2,t] = m.sin((Nx-2)*h)
-        u[Nx-1,t] = m.sin((Nx-1)*h)
+    #for t in range(0, Nt+1):
+    #u[0,0] = m.sin(0*h)
+    #u[Nx-1,0] = m.sin((Nx-1)*h)
     return u
 
 #Entrada
