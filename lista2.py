@@ -19,7 +19,7 @@ def laxFriedrichs(uu,Nx,Nt,h,dt):
     global K
     u = np.zeros([Nx+1,Nt+1])
     u[:,:] = uu[:,:]
-    for t in range(0,Nt):
+    for t in range(1,Nt):
         for i in range(1,Nx-1):
             u[i,t+1] = 0.5*(u[i+1,t]+u[i-1,t]) - (K*dt/(2*h))*(u[i+1,t]-u[i-1,t])
         u[0,t+1] = u[1,t+1]
@@ -31,45 +31,36 @@ def laxFriedrichs(uu,Nx,Nt,h,dt):
     Método Kurganov-Tadmor - KT
 */
 """
-def kurganovTadmor(uu,Nx,Nt,h,dt):
+def KT(uu, Nx, Nt, dx, dt):
     u = np.zeros([Nx+1,Nt+1])
     u[:,:] = uu[:,:]
-
-    for t in range(0,Nt):
-        for j in range(1,Nx-1):
-            u[j,t] = - (H(u,j+0.5,t,h)-H(u,j-0.5,t,h))/h
+    for t in range(1, Nt):
+        for j in range(1, Nx):
+            u[j,t] = u[j,0] + dt * (-(H(u,j,t,dx) - H(u, j-1, t,dx))/dx)
 
     return u
 
-def H(u,j,t,h):
-    return 0.5*(f(uPlus(u,j,t,h)) + f(uMinus(u,j,t,h))) - (0.5*a(u,j,t,h))*(uPlus(u,j,t,h) - uMinus(u,j,t,h))
+def f(u):
+    return m.sin(u)
 
-def uPlus(u,j,t,h):
-    up[j,t] = u[j + 0.5,t] - 0.5*h*uX(u,j + 0.5,t,h)
-    return up
+def dfdu(u):
+    return m.cos(u)
 
-def uMinus(u,j,t,h):
-    um[j,t] = u[j - 0.5] + 0.5*h*uX(u,j-0.5,t,h)
-    return um
+def a(u, j, t, dx):
+    a1 = dfdu(uPlus(u, j, t, dx))
+    a2 = dfdu(uMinus(u, j, t, dx))
+    if a1 > a2:
+        return a1
+    return a1
 
-def uX(u,j,t,h):
-    lista = list()
-    lista.append(2*(u[j,t] - u[j-1,t])/h)
-    lista.append((u[j+1,t] - u[j-1,t])/2*h)
-    lista.append(2*(u[j+1,t] - u[j,t])/h)
+def H(u, j, t, dx):
+    return 0.5*(f(uPlus(u, j, t, dx)+uMinus(u, j, t, dx)) - a(u, j, t, dx)*(uPlus(u, j, t, dx) - uMinus(u, j, t, dx)))
 
-    resultado = min(lista)
+def uPlus(u, j, t, dx):
+    return u[j+1,t] - 0.5 * dx * u[j+1,t]
 
-    return abs(resultado)
-
-def a(u,j,t,h):
-    return max(derivadaF(uPlus(u,j,t,h)),derivadaF(uMinus(u,j,t,h)))
-
-def f(x):
-    return x
-
-def derivadaF(x):
-    return x
+def uMinus(u, j, t, dx):
+    return u[j,t] + 0.5 * dx * u[j,t]    
 
 ############################################################
 
@@ -88,7 +79,7 @@ def condicoesContorno(u,Nx,Nt):
 
 #Entrada
 A = 0 #Limite inferior para x
-B = m.pi #Limite superior para x
+B = m.pi*2 #Limite superior para x
 Nx = 102 #Quantidade de elementos + (inicio + final) -> 2
 h = (B - A)/np.float(Nx) #Discretização no espaço
 T = 4 #Tempo final
@@ -103,11 +94,12 @@ u = condicaoInicial(Nx,Nt,h)
 
 u = condicoesContorno(u,Nx,Nt)
 
-u_laxFri = laxFriedrichs(u,Nx,Nt,h,dt)
-#u_kt = kurganovTadmor(u,Nx,Nt,h,dt)
+#u_laxFri = laxFriedrichs(u,Nx,Nt,h,dt)
+u_kt = KT(u,Nx,Nt,h,dt)
 
 tj = 0 #Instante de tempo desejado
-t = int(tj/dt) #Índice correspondente
+t = int(tj/dt) #Índice correspondente ///
+t = 1
 
 #Plota o grafico
 #plt.title('Exata x Aproximada (400 elementos, dt = 1.5h)')
@@ -116,12 +108,13 @@ plt.title('Exata x Aproximada ('+ str(Nx) +  ' elementos , dt = ' + str(dt/h) + 
 #plt.ylim (0 ,1.1)
 plt.grid()
 
-plt.plot(x,u_laxFri[:,t],'b-',label = 'Lax-Friedrichs')
+#plt.plot(x,u_laxFri[:,t],'b-',label = 'Lax-Friedrichs')
+plt.plot(x,u_kt[:,t],'b-',label = 'Kurganov-Tadmor')
 #plt.plot(xe,ye,'r-',label = 'exata')
 plt.xlabel( 'x' )
 plt.ylabel ( 'u' )
 plt.legend(loc='best')
-diretorio = "/home/lucas/Downloads/"
+diretorio = ""
 nomefig = "problema02_b2.png"
 plt.savefig(diretorio+nomefig, dpi=200)
 plt.show()
