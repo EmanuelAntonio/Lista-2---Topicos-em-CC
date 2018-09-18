@@ -51,7 +51,7 @@ def a(u, j, t, dx):
     a2 = dfdu(uMinus(u, j, t, dx))
     if a1 > a2:
         return a1
-    return a1
+    return a2
 
 def H(u, j, t, dx):
     return 0.5*(f(uPlus(u, j, t, dx)+uMinus(u, j, t, dx)) - a(u, j, t, dx)*(uPlus(u, j, t, dx) - uMinus(u, j, t, dx)))
@@ -60,7 +60,7 @@ def uPlus(u, j, t, dx):
     return u[j+1,t] - 0.5 * dx * u[j+1,t]
 
 def uMinus(u, j, t, dx):
-    return u[j,t] + 0.5 * dx * u[j,t]    
+    return u[j,t] + 0.5 * dx * u[j,t]
 
 ############################################################
 
@@ -83,7 +83,7 @@ B = m.pi*2 #Limite superior para x
 Nx = 102 #Quantidade de elementos + (inicio + final) -> 2
 h = (B - A)/np.float(Nx) #Discretização no espaço
 T = 4 #Tempo final
-dt = 0.5*h #Discretização no tempo
+dt = 1.5*h #Discretização no tempo
 Nt = np.int(T/dt) #Quantidade de iterações no tempo
 x = np.linspace(A,B,Nx+1) #Para plot das aproximações
 K = 1 #Coeficiente convectivo
@@ -99,17 +99,16 @@ u_kt = KT(u,Nx,Nt,h,dt)
 
 tj = 0 #Instante de tempo desejado
 t = int(tj/dt) #Índice correspondente ///
-t = 1
 
 #Plota o grafico
 #plt.title('Exata x Aproximada (400 elementos, dt = 1.5h)')
-plt.title('Exata x Aproximada ('+ str(Nx) +  ' elementos , dt = ' + str(dt/h) + 'h)')
+plt.title('Exata x Aproximada ('+ str(Nx - 2) +  ' elementos , dt = ' + str(dt/h) + 'h)')
 #plt.xlim (-1 ,1)
 #plt.ylim (0 ,1.1)
 plt.grid()
 
 #plt.plot(x,u_laxFri[:,t],'b-',label = 'Lax-Friedrichs')
-plt.plot(x,u_kt[:,t],'b-',label = 'Kurganov-Tadmor')
+plt.plot(x,u_kt[:,t],'g-',label = 'Kurganov-Tadmor')
 #plt.plot(xe,ye,'r-',label = 'exata')
 plt.xlabel( 'x' )
 plt.ylabel ( 'u' )
